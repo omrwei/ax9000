@@ -14,7 +14,7 @@ if [ "$num" = 1 ] || [ "$num" = 2 ]; then
     mkdir /mtd22
 
     #/etc/fstab加一行自动挂载
-    /dev/mtdblock22 /mtd22 ext4 defaults 0 0
+    echo /dev/mtdblock22 /mtd22 ext4 defaults 0 0 >/etc/fstab
 
     #挂载新分区
     mount -a
@@ -47,7 +47,8 @@ if [ "$num" = 1 ] || [ "$num" = 2 ]; then
     [ -n "$(find /mtd22/ -name 'tmp.tar.gz')" ] && echo ---------- || exit
     [ -n "$(find /tmp/ -name 'alist')" ] && echo tmp已解压 || /bin/tar -zxvf /mtd22/tmp.tar.gz  -C /tmp
     echo  "MTD22分区设置成功！！！"
-elif [ "$num" = 3 ]
+    source /etc/profile
+elif [ "$num" = 3 ]; then
     echo "跳过，进行下一步"
 else
     exit
@@ -59,6 +60,7 @@ read -p "请输入对应数字 > " num
 echo -----------------------------------------------
 
 if [ "$num" = 1 ]; then
+    source /etc/profile
     [ -n "$(find /tmp/ -name 'alist')" ] && echo tmp已解压 || /bin/tar -zxvf /mtd22/tmp.tar.gz  -C /tmp
 
     #链接和提权文件
@@ -67,6 +69,7 @@ if [ "$num" = 1 ]; then
     chmod 777 /tmp/rttys
     chmod 777 /tmp/alist
     chmod 777 /userdisk/* -R
+    chmod 777 /etc/vsftpd.conf -R
     chmod 777 /etc/init.d/clash
 
     echo 启动 alist
