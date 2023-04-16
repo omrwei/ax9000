@@ -71,7 +71,8 @@ if [ "$num" = 1 ]; then
     chmod 777 /userdisk/* -R
     chmod 777 /etc/vsftpd.conf -R
     chmod 777 /etc/init.d/clash
-
+    chown root:root /etc/vsftpd.conf
+    chown root:root /userdisk/* -R
     echo 启动 alist
     pidof alist>/dev/null && echo alist 已开启 || /userdisk/alist/alist restart
 
