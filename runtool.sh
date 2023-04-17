@@ -74,12 +74,14 @@ if [ "$num" = 1 ]; then
     chown root:root /etc/vsftpd.conf
     chown root:root /userdisk/* -R
     echo 启动 alist
+    cd /userdisk/alist/
     pidof alist>/dev/null && echo alist 已开启 || /userdisk/alist/alist restart
 
     echo 启动 rttys
     pidof rtty>/dev/null && echo rtty 已开启 || rtty -I xiaowei -h localhost -p 5912 -a -D
 
     echo 启动 rttys
+    cd /userdisk/rttys/
     ln -sf /userdisk/rttys/rttys.db /rttys.db
     ln -sf /userdisk/rttys/rttys.db /root/rttys.db
     pidof rttys>/dev/null && echo rttys 已开启 || sh -c '/userdisk/rttys/rttys > /dev/null 2>&1 &'
