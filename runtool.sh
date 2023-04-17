@@ -14,7 +14,7 @@ if [ "$num" = 1 ] || [ "$num" = 2 ]; then
     mkdir /mtd22
 
     #/etc/fstab加一行自动挂载
-    echo /dev/mtdblock22 /mtd22 ext4 defaults 0 0 >/etc/fstab
+    [ -n "$(cat /etc/fstab | grep mtd22)" ] && echo 挂载新分区 || echo /dev/mtdblock22 /mtd22 ext4 defaults 0 0 >> /etc/fstab
 
     #挂载新分区
     mount -a
@@ -25,27 +25,35 @@ if [ "$num" = 1 ] || [ "$num" = 2 ]; then
     #下载压缩文件到/MTD22分区
     echo 查找安装文件
     cd  `dirname $0`
-    if [ -n "$(echo $0 | grep '/mtd22/')" ]; then
+    if [ -n "$(ls /mtd22/ | grep 'runtool.sh')" ]; then
         echo runtool已存在
     else
         cp -f $0 '/mtd22/runtool.sh'
     fi
 
+    if [ -n "$(ls /mtd22/ | grep 'xxx.tar.gz')" ]; then
+        echo xxx.tar.gz已存在
+    else
     [ -n "$(ls | grep 'xxx.tar.gz')" ] && echo 处理XXX文件 || echo XXX文件不存在，无法继续执行。
     [ -n "$(ls | grep 'xxx.tar.gz')" ] && cp -f 'xxx.tar.gz' '/mtd22/xxx.tar.gz' || exit
+    fi
+
+
+    if [ -n "$(ls /mtd22/ | grep 'tmp.tar.gz')" ]; then
+        echo tmp.tar.gz已存在
+    else
     [ -n "$(ls | grep 'tmp.tar.gz')" ] && echo 处理TMP文件 || echo TMP文件不存在，无法继续执行。
     [ -n "$(ls | grep 'tmp.tar.gz')" ] && cp -f 'tmp.tar.gz' '/mtd22/tmp.tar.gz' || exit
-
-
+    fi
 
     #载入压缩文件，尝试解压安装
     [ -n "$(find /mtd22/ -name 'xxx.tar.gz')" ] && echo 开始解压XXX || echo XXX文件不存在，无法继续执行。
     [ -n "$(find /mtd22/ -name 'xxx.tar.gz')" ] && echo ---------- || exit
-    [ -n "$(find /userdisk/ -name 'auto_start.sh')" ] && echo xxx已解压 || /bin/tar -zxvf /mtd22/xxx.tar.gz  -C /
+    /bin/tar -zxvf /mtd22/xxx.tar.gz  -C /
 
     [ -n "$(find /mtd22/ -name 'tmp.tar.gz')" ] && echo 开始解压TMP || echo TMP文件不存在，无法继续执行。
     [ -n "$(find /mtd22/ -name 'tmp.tar.gz')" ] && echo ---------- || exit
-    [ -n "$(find /tmp/ -name 'alist')" ] && echo tmp已解压 || /bin/tar -zxvf /mtd22/tmp.tar.gz  -C /tmp
+        /bin/tar -zxvf /mtd22/tmp.tar.gz  -C /tmp
     echo  "MTD22分区设置成功！！！"
     source /etc/profile
 elif [ "$num" = 3 ]; then
